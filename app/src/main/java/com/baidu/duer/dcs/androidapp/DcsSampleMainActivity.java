@@ -58,22 +58,22 @@ import java.io.File;
  * Created by zhangyan42@baidu.com on 2017/5/18.
  */
 public class DcsSampleMainActivity extends Activity implements View.OnClickListener {
-    public static final String TAG = "DcsDemoActivity";
-    private Button voiceButton;
-    private TextView textViewTimeStopListen;
-    private TextView textViewRenderVoiceInputText;
-    private Button pauseOrPlayButton;
-    private BaseWebView webView;
+    public static final String TAG = DcsSampleMainActivity.class.getSimpleName();
+    private Button mVoiceButton;
+    private TextView mTextViewTimeStopListen;
+    private TextView mTextViewRenderVoiceInputText;
+    private Button mPauseOrPlayButton;
+    private BaseWebView mWebView;
     private LinearLayout mTopLinearLayout;
-    private DcsFramework dcsFramework;
-    private DeviceModuleFactory deviceModuleFactory;
-    private IPlatformFactory platformFactory;
-    private boolean isPause = true;
-    private long startTimeStopListen;
-    private boolean isStopListenReceiving;
+    private DcsFramework mDcsFramework;
+    private DeviceModuleFactory mDeviceModuleFactory;
+    private IPlatformFactory mPlatformFactory;
+    private boolean mIsPause = true;
+    private long mStartTimeStopListen;
+    private boolean mIsStopListenReceiving;
     private String mHtmlUrl;
     // 唤醒
-    private WakeUp wakeUp;
+    private WakeUp mWakeUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,15 +87,15 @@ public class DcsSampleMainActivity extends Activity implements View.OnClickListe
     private void initView() {
         Button openLogBtn = (Button) findViewById(R.id.openLogBtn);
         openLogBtn.setOnClickListener(this);
-        voiceButton = (Button) findViewById(R.id.voiceBtn);
-        voiceButton.setOnClickListener(this);
+        mVoiceButton = (Button) findViewById(R.id.voiceBtn);
+        mVoiceButton.setOnClickListener(this);
 
-        textViewTimeStopListen = (TextView) findViewById(R.id.id_tv_time_0);
-        textViewRenderVoiceInputText = (TextView) findViewById(R.id.id_tv_RenderVoiceInputText);
+        mTextViewTimeStopListen = (TextView) findViewById(R.id.id_tv_time_0);
+        mTextViewRenderVoiceInputText = (TextView) findViewById(R.id.id_tv_RenderVoiceInputText);
         mTopLinearLayout = (LinearLayout) findViewById(R.id.topLinearLayout);
 
-        webView = new BaseWebView(DcsSampleMainActivity.this.getApplicationContext());
-        webView.setWebViewClientListen(new BaseWebView.WebViewClientListener() {
+        mWebView = new BaseWebView(DcsSampleMainActivity.this.getApplicationContext());
+        mWebView.setWebViewClientListen(new BaseWebView.WebViewClientListener() {
             @Override
             public BaseWebView.LoadingWebStatus shouldOverrideUrlLoading(WebView view, String url) {
                 // 拦截处理不让其点击
@@ -110,7 +110,7 @@ public class DcsSampleMainActivity extends Activity implements View.OnClickListe
             @Override
             public void onPageFinished(WebView view, String url) {
                 if (!url.equals(mHtmlUrl) && !"about:blank".equals(mHtmlUrl)) {
-                    platformFactory.getWebView().linkClicked(url);
+                    mPlatformFactory.getWebView().linkClicked(url);
                 }
 
                 mHtmlUrl = url;
@@ -121,25 +121,25 @@ public class DcsSampleMainActivity extends Activity implements View.OnClickListe
 
             }
         });
-        mTopLinearLayout.addView(webView);
+        mTopLinearLayout.addView(mWebView);
 
         Button mPreviousSongBtn = (Button) findViewById(R.id.previousSongBtn);
-        pauseOrPlayButton = (Button) findViewById(R.id.pauseOrPlayBtn);
+        mPauseOrPlayButton = (Button) findViewById(R.id.pauseOrPlayBtn);
         Button mNextSongBtn = (Button) findViewById(R.id.nextSongBtn);
         mPreviousSongBtn.setOnClickListener(this);
-        pauseOrPlayButton.setOnClickListener(this);
+        mPauseOrPlayButton.setOnClickListener(this);
         mNextSongBtn.setOnClickListener(this);
     }
 
     private void initFramework() {
-        platformFactory = new PlatformFactoryImpl(this);
-        platformFactory.setWebView(webView);
-        dcsFramework = new DcsFramework(platformFactory);
-        deviceModuleFactory = dcsFramework.getDeviceModuleFactory();
+        mPlatformFactory = new PlatformFactoryImpl(this);
+        mPlatformFactory.setWebView(mWebView);
+        mDcsFramework = new DcsFramework(mPlatformFactory);
+        mDeviceModuleFactory = mDcsFramework.getDeviceModuleFactory();
 
-        deviceModuleFactory.createVoiceOutputDeviceModule();
-        deviceModuleFactory.createVoiceInputDeviceModule();
-        deviceModuleFactory.getVoiceInputDeviceModule().addVoiceInputListener(
+        mDeviceModuleFactory.createVoiceOutputDeviceModule();
+        mDeviceModuleFactory.createVoiceInputDeviceModule();
+        mDeviceModuleFactory.getVoiceInputDeviceModule().addVoiceInputListener(
                 new VoiceInputDeviceModule.IVoiceInputListener() {
                     @Override
                     public void onStartRecord() {
@@ -176,58 +176,58 @@ public class DcsSampleMainActivity extends Activity implements View.OnClickListe
                     }
                 });
 
-        deviceModuleFactory.createAlertsDeviceModule();
+        mDeviceModuleFactory.createAlertsDeviceModule();
 
-        deviceModuleFactory.createAudioPlayerDeviceModule();
-        deviceModuleFactory.getAudioPlayerDeviceModule().addAudioPlayListener(
+        mDeviceModuleFactory.createAudioPlayerDeviceModule();
+        mDeviceModuleFactory.getAudioPlayerDeviceModule().addAudioPlayListener(
                 new IMediaPlayer.SimpleMediaPlayerListener() {
                     @Override
                     public void onPaused() {
                         super.onPaused();
-                        pauseOrPlayButton.setText(getResources().getString(R.string.audio_paused));
-                        isPause = true;
+                        mPauseOrPlayButton.setText(getResources().getString(R.string.audio_paused));
+                        mIsPause = true;
                     }
 
                     @Override
                     public void onPlaying() {
                         super.onPlaying();
-                        pauseOrPlayButton.setText(getResources().getString(R.string.audio_playing));
-                        isPause = false;
+                        mPauseOrPlayButton.setText(getResources().getString(R.string.audio_playing));
+                        mIsPause = false;
                     }
 
                     @Override
                     public void onCompletion() {
                         super.onCompletion();
-                        pauseOrPlayButton.setText(getResources().getString(R.string.audio_default));
-                        isPause = false;
+                        mPauseOrPlayButton.setText(getResources().getString(R.string.audio_default));
+                        mIsPause = false;
                     }
 
                     @Override
                     public void onStopped() {
                         super.onStopped();
-                        pauseOrPlayButton.setText(getResources().getString(R.string.audio_default));
-                        isPause = true;
+                        mPauseOrPlayButton.setText(getResources().getString(R.string.audio_default));
+                        mIsPause = true;
                     }
                 });
 
-        deviceModuleFactory.createSystemDeviceModule();
-        deviceModuleFactory.createSpeakControllerDeviceModule();
-        deviceModuleFactory.createPlaybackControllerDeviceModule();
-        deviceModuleFactory.createScreenDeviceModule();
-        deviceModuleFactory.getScreenDeviceModule()
+        mDeviceModuleFactory.createSystemDeviceModule();
+        mDeviceModuleFactory.createSpeakControllerDeviceModule();
+        mDeviceModuleFactory.createPlaybackControllerDeviceModule();
+        mDeviceModuleFactory.createScreenDeviceModule();
+        mDeviceModuleFactory.getScreenDeviceModule()
                 .addRenderVoiceInputTextListener(new ScreenDeviceModule.IRenderVoiceInputTextListener() {
                     @Override
                     public void onRenderVoiceInputText(RenderVoiceInputTextPayload payload) {
-                        textViewRenderVoiceInputText.setText(payload.text);
+                        mTextViewRenderVoiceInputText.setText(payload.text);
                     }
 
                 });
         // init唤醒
-        wakeUp = new WakeUp(platformFactory.getWakeUp(),
-                platformFactory.getAudioRecord());
-        wakeUp.addWakeUpListener(wakeUpListener);
+        mWakeUp = new WakeUp(mPlatformFactory.getWakeUp(),
+                mPlatformFactory.getAudioRecord());
+        mWakeUp.addWakeUpListener(wakeUpListener);
         // 开始录音，监听是否说了唤醒词
-        wakeUp.startWakeUp();
+        mWakeUp.startWakeUp();
     }
 
     private IWakeUp.IWakeUpListener wakeUpListener = new IWakeUp.IWakeUpListener() {
@@ -237,12 +237,12 @@ public class DcsSampleMainActivity extends Activity implements View.OnClickListe
                     getResources().getString(R.string.wakeup_succeed),
                     Toast.LENGTH_SHORT)
                     .show();
-            voiceButton.performClick();
+            mVoiceButton.performClick();
         }
     };
 
     private void doUserActivity() {
-        deviceModuleFactory.getSystemProvider().userActivity();
+        mDeviceModuleFactory.getSystemProvider().userActivity();
     }
 
     private void initOauth() {
@@ -251,20 +251,20 @@ public class DcsSampleMainActivity extends Activity implements View.OnClickListe
     }
 
     private void stopRecording() {
-        wakeUp.startWakeUp();
-        isStopListenReceiving = false;
-        voiceButton.setText(getResources().getString(R.string.stop_record));
-        long t = System.currentTimeMillis() - startTimeStopListen;
-        textViewTimeStopListen.setText(getResources().getString(R.string.time_record, t));
+        mWakeUp.startWakeUp();
+        mIsStopListenReceiving = false;
+        mVoiceButton.setText(getResources().getString(R.string.stop_record));
+        long t = System.currentTimeMillis() - mStartTimeStopListen;
+        mTextViewTimeStopListen.setText(getResources().getString(R.string.time_record, t));
     }
 
     private void startRecording() {
-        wakeUp.stopWakeUp();
-        isStopListenReceiving = true;
-        deviceModuleFactory.getSystemProvider().userActivity();
-        voiceButton.setText(getResources().getString(R.string.start_record));
-        textViewTimeStopListen.setText("");
-        textViewRenderVoiceInputText.setText("");
+        mWakeUp.stopWakeUp();
+        mIsStopListenReceiving = true;
+        mDeviceModuleFactory.getSystemProvider().userActivity();
+        mVoiceButton.setText(getResources().getString(R.string.start_record));
+        mTextViewTimeStopListen.setText("");
+        mTextViewRenderVoiceInputText.setText("");
     }
 
     @Override
@@ -275,7 +275,7 @@ public class DcsSampleMainActivity extends Activity implements View.OnClickListe
                     Toast.makeText(this,
                             getResources().getString(R.string.err_net_msg),
                             Toast.LENGTH_SHORT).show();
-                    wakeUp.startWakeUp();
+                    mWakeUp.startWakeUp();
                     return;
                 }
                 if (CommonUtil.isFastDoubleClick()) {
@@ -286,36 +286,36 @@ public class DcsSampleMainActivity extends Activity implements View.OnClickListe
                     finish();
                     return;
                 }
-                if (!dcsFramework.getDcsClient().isConnected()) {
-                    dcsFramework.getDcsClient().startConnect();
+                if (!mDcsFramework.getDcsClient().isConnected()) {
+                    mDcsFramework.getDcsClient().startConnect();
                     return;
                 }
-                if (isStopListenReceiving) {
-                    platformFactory.getVoiceInput().stopRecord();
-                    isStopListenReceiving = false;
+                if (mIsStopListenReceiving) {
+                    mPlatformFactory.getVoiceInput().stopRecord();
+                    mIsStopListenReceiving = false;
                     return;
                 }
-                isStopListenReceiving = true;
-                startTimeStopListen = System.currentTimeMillis();
-                platformFactory.getVoiceInput().startRecord();
+                mIsStopListenReceiving = true;
+                mStartTimeStopListen = System.currentTimeMillis();
+                mPlatformFactory.getVoiceInput().startRecord();
                 doUserActivity();
                 break;
             case R.id.openLogBtn:
                 openAssignFolder(FileUtil.getLogFilePath());
                 break;
             case R.id.previousSongBtn:
-                platformFactory.getPlayback().previous(nextPreResponseListener);
+                mPlatformFactory.getPlayback().previous(nextPreResponseListener);
                 doUserActivity();
                 break;
             case R.id.nextSongBtn:
-                platformFactory.getPlayback().next(nextPreResponseListener);
+                mPlatformFactory.getPlayback().next(nextPreResponseListener);
                 doUserActivity();
                 break;
             case R.id.pauseOrPlayBtn:
-                if (isPause) {
-                    platformFactory.getPlayback().play(playPauseResponseListener);
+                if (mIsPause) {
+                    mPlatformFactory.getPlayback().play(playPauseResponseListener);
                 } else {
-                    platformFactory.getPlayback().pause(playPauseResponseListener);
+                    mPlatformFactory.getPlayback().pause(playPauseResponseListener);
                 }
                 doUserActivity();
                 break;
@@ -394,16 +394,16 @@ public class DcsSampleMainActivity extends Activity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         // 先remove listener  停止唤醒,释放资源
-        wakeUp.removeWakeUpListener(wakeUpListener);
-        wakeUp.stopWakeUp();
-        wakeUp.releaseWakeUp();
+        mWakeUp.removeWakeUpListener(wakeUpListener);
+        mWakeUp.stopWakeUp();
+        mWakeUp.releaseWakeUp();
 
-        if (dcsFramework != null) {
-            dcsFramework.release();
+        if (mDcsFramework != null) {
+            mDcsFramework.release();
         }
-        webView.setWebViewClientListen(null);
-        mTopLinearLayout.removeView(webView);
-        webView.removeAllViews();
-        webView.destroy();
+        mWebView.setWebViewClientListen(null);
+        mTopLinearLayout.removeView(mWebView);
+        mWebView.removeAllViews();
+        mWebView.destroy();
     }
 }

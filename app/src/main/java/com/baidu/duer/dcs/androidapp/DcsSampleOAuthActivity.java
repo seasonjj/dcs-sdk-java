@@ -39,14 +39,14 @@ import com.baidu.duer.dcs.util.LogUtil;
 public class DcsSampleOAuthActivity extends Activity implements View.OnClickListener {
     // 需要开发者自己申请client_id
     // client_id，就是oauth的client_id
-    private static final String CLIENT_ID = "{{placeholder for your client_id}}";
+    private static final String CLIENT_ID = "1sxLGZyLiTuMl6GZ8vYrRPFhC6HwSWj8";
     // 是否每次授权都强制登陆
-    private boolean isForceLogin = false;
+    private boolean mIsForceLogin = false;
     // 是否每次都确认登陆
     private boolean isConfirmLogin = true;
-    private EditText editTextClientId;
-    private Button oauthLoginButton;
-    private BaiduOauthImplicitGrant baiduOauthImplicitGrant;
+    private EditText mEditTextClientId;
+    private Button mOauthLoginButton;
+    private BaiduOauthImplicitGrant mBaiduOauthImplicitGrant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,24 +57,24 @@ public class DcsSampleOAuthActivity extends Activity implements View.OnClickList
     }
 
     private void setOnClickListener() {
-        oauthLoginButton.setOnClickListener(this);
+        mOauthLoginButton.setOnClickListener(this);
     }
 
     private void initView() {
-        editTextClientId = (EditText) findViewById(R.id.edit_client_id);
-        oauthLoginButton = (Button) findViewById(R.id.btn_login);
+        mEditTextClientId = (EditText) findViewById(R.id.edit_client_id);
+        mOauthLoginButton = (Button) findViewById(R.id.btn_login);
 
-        editTextClientId.setText(CLIENT_ID);
+        mEditTextClientId.setText(CLIENT_ID);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
-                String clientId = editTextClientId.getText().toString();
+                String clientId = mEditTextClientId.getText().toString();
                 if (!TextUtils.isEmpty(clientId)) {
-                    baiduOauthImplicitGrant = new BaiduOauthImplicitGrant(clientId, DcsSampleOAuthActivity.this.getApplication());
-                    baiduOauthImplicitGrant.authorize(DcsSampleOAuthActivity.this, isForceLogin, isConfirmLogin, new BaiduDialog
+                    mBaiduOauthImplicitGrant = new BaiduOauthImplicitGrant(clientId, DcsSampleOAuthActivity.this.getApplication());
+                    mBaiduOauthImplicitGrant.authorize(DcsSampleOAuthActivity.this, mIsForceLogin, isConfirmLogin, new BaiduDialog
                             .BaiduDialogListener() {
                         @Override
                         public void onComplete(Bundle values) {
